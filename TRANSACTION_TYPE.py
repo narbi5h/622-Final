@@ -3,9 +3,7 @@ import json
 from typing import List, Dict, Any
 import pandas as pd
 
-
 #TRANSACTION_TYPE CLASS
-
 
 class TRANSACTION_TYPE:
     def __init__(self):
@@ -48,5 +46,3 @@ class TRANSACTION_TYPE:
                 return f"Type ID {type_id} already exists"
         self.data.append({'type_id': type_id, 'category_name': category_name})
         return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
-
-

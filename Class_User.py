@@ -3,7 +3,7 @@ import hashlib
 from typing import List, Dict
 
 class User:
-    def __init__(self, db_path: str = "wallet.db"):
+    def __init__(self, db_path: str = "walletApp.db"):
         """Initialize with path to SQLite database."""
         self.db_path = db_path
 

@@ -2,7 +2,7 @@ import sqlite3
 from typing import List, Dict, Any
 
 class Categories:
-    def __init__(self, db_path: str = "insertdatabase.db"):
+    def __init__(self, db_path: str = "walletApp.db"):
         self.db_path = db_path
 
     def connect(self):
@@ -72,7 +72,7 @@ class Categories:
 
 
 # if __name__ == "__main__":
-#     cat = Categories("insertdatabase.db")
+#     cat = Categories("walletApp.db")
 
 #     # Example usage
 #     print(cat.add("Books"))

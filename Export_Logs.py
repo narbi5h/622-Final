@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 class exportLogs:
-    def __init__(self, db_path: str = "wallet.db"):
+    def __init__(self, db_path: str = "walletApp.db"):
         self.db_path = db_path
         self.logs = self.loadLogsWithBalance()
 
@@ -49,7 +49,7 @@ class exportLogs:
         return results if results else [{"error": f"No logs found with balance {balance}"}]
 
 # if __name__ == "__main__":
-#     logs = exportLogs("wallet.db")
+#     logs = exportLogs("walletApp.db")
 
 #     print("=== SORTED BY TIMESTAMP ===")
 #     for log in logs.sortByTimestamp():

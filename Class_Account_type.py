@@ -2,7 +2,7 @@ import sqlite3
 from typing import List, Dict
 
 class AccountType:
-    def __init__(self, db_path: str = "wallet.db"):
+    def __init__(self, db_path: str = "walletApp.db"):
         """
         Manages the `account_types` table, which should have columns:
           - type_id       INTEGER PRIMARY KEY
