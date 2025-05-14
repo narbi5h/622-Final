@@ -1,6 +1,10 @@
 #import the necessary libraries
 import json
 from typing import List, Dict, Any
+import pandas as pd
+
+
+#TRANSACTION_TYPE CLASS
 
 
 class TRANSACTION_TYPE:
@@ -37,12 +41,12 @@ class TRANSACTION_TYPE:
         """Search for transaction types containing the keyword in category_name."""
         return [item for item in self.data if keyword.lower() in item['category_name'].lower()]
 
-    def GROUP(self):
-        """Group transaction types by sub_category_id."""
-        grouped = {}
+    def ADD(self, type_id, category_name):
+        """Add a new transaction type."""
         for item in self.data:
-            key = item['sub_category_id']
-            grouped.setdefault(key, []).append(item)
-        return grouped
+            if item['type_id'] == type_id:
+                return f"Type ID {type_id} already exists"
+        self.data.append({'type_id': type_id, 'category_name': category_name})
+        return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
 
 
