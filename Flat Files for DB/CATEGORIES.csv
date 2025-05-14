@@ -1,0 +1,11 @@
+sub_category_id,name,transaction_type_id
+SC101,Salary,1
+SC102,Freelance,1
+SC103,Investment Returns,1
+SC104,Rental Income,1
+SC105,Business Profit,1
+SC201,Rent,2
+SC202,Groceries,2
+SC203,Utilities,2
+SC204,Transportation,2
+SC205,Entertainment,2
