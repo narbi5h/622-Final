@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 class exportLogs:
     def __init__(self, db_path: str = "insertdatabase.db"):
         self.db_path = db_path
-        self.logs = self.load_logs_with_balance()
+        self.logs = self.loadLogsWithBalance()
 
     def loadLogsWithBalance(self) -> List[Dict[str, Any]]:
         """Join exportLogs with ACCOUNT to include balance for sorting."""
