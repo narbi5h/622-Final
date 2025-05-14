@@ -1,14 +1,13 @@
+from Class_Account_type import AccountType
+from Class_User import User
 from Class_Account import Account  
+from Export_Logs import exportLogs
 from Class_Transaction import Transaction  
-
-#TESTING APPROVAL PROCESS IN GITHUB
-# Testing approval - Jcllee99
-#Testing pull and push - Jcllee99
-
+from TRANSACTION_TYPE import TRANSACTION_TYPE
+# from Category import Category <- No script yet, should add after finishing
+from classes import Record, Income, Expense, Account
 import pandas as pd
-
-
-
+from datetime import datetime
 
 def getFloat(prompt: str) -> float:
     while True:
@@ -31,29 +30,33 @@ class Menu:
         self.account = Account(file)
         self.transaction = Transaction()
         self.quit = False
-        options = [Option("B", self.edit_balance), 
-                   Option("I", self.add_income), 
-                   Option("E", self.add_expense),
-                   Option("VB", self.view_balance), 
-                   Option("VI", self.view_incomes), 
-                   Option("VE", self.view_expenses),
-
-                    # mary added this line to add a new function as an option
-                    Option("LA", self.list_all),          
-                    Option("SA", self.switch_accounts),  
-                    Option("CA", self.close_account),     
-                    Option("OA", self.open_account),      
-                    Option("TR", self.transfer),          
-                    Option("UA", self.update_amount),    
-
-                   Option("Q", self.exit)]
-        # TODO: add new functions as options (no sub menu)
+        options = [
+            Option("B", self.edit_balance), 
+            Option("I", self.add_income), 
+            Option("E", self.add_expense),
+            Option("VB", self.view_balance), 
+            Option("VI", self.view_incomes), 
+            Option("VE", self.view_expenses),
+            # mary added this line to add a new function as an option
+            Option("LA", self.list_all),          
+            Option("SA", self.switch_accounts),  
+            Option("CA", self.close_account),     
+            Option("OA", self.open_account),      
+            Option("TR", self.transfer),          
+            Option("UA", self.update_amount),   
+            # adding new functions as options (no sub menu)
+            Option("XL", self.view_logs_by_index),
+            Option("XT", self.view_logs_by_timestamp),
+            Option("XF", self.find_log_by_id),
+            Option("XB", self.find_log_by_balance), 
+            # Q to exit
+            Option("Q", self.exit)
+            ]
         self.options = {option.code: option for option in options}
 
     def edit_balance(self):
         amount = getFloat("Enter Balance:")
         self.account.edit_balance(amount)
-
 
     def add_income(self):
         amount = getFloat("Enter Income:")
@@ -89,7 +92,6 @@ class Menu:
     def update_amount(self):
         self.transaction.update_amount(self.account)
 
-
     def view_balance(self):
         print(f"Current balance of Account '{self.account.name}': {self.account.balance()}")
 
@@ -104,6 +106,30 @@ class Menu:
             print(f"{expense}")
         Total_expense = sum(expense.amount for expense in self.account.expenses)
         print(f"Current Expense: {Total_expense}")
+
+    # Export Logs functionality
+    def view_logs_by_index(self):
+        for log in self.export_logs.SORT_BY_INDEX():
+            print(log)
+
+    def view_logs_by_timestamp(self):
+        for log in self.export_logs.SORT_BY_TIMESTAMP():
+            print(log)
+
+    def find_log_by_id(self):
+        try:
+            log_id = int(input("Enter Export Log ID: "))
+            print(self.export_logs.FIND_BY_INDEX(log_id))
+        except ValueError:
+            print("Please enter a valid integer.")
+
+    def find_log_by_balance(self):
+        try:
+            balance = float(input("Enter Balance to search for: "))
+            for log in self.export_logs.FIND_BY_AMOUNT(balance):
+                print(log)
+        except ValueError:
+            print("Please enter a valid number.")
 
     def exit(self):
         self.quit = True
@@ -123,7 +149,13 @@ class Menu:
                   OA = Open new account            
                   CA = Close current account       
                   TR = Transfer to another account 
-                  UA = Update a transaction amount 
+                  UA = Update a transaction amount
+
+                  XL = View export logs (by index)
+                  XT = View export logs (by timestamp)
+                  XF = Find export log by ID
+                  XB = Find export logs by balance
+
                   Q = Quit program
                 """)
             try:
@@ -131,11 +163,9 @@ class Menu:
             except KeyError:
                 print("Please enter a valid option.")
 
-
 class Option:
     def __init__(self, code: str, func):
         self.code = code
         self.execute = func
-
 
 Menu().loop()
