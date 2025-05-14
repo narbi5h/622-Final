@@ -1,4 +1,5 @@
-from classes import Account
+from Class_Account import Account  
+from Class_Transaction import Transaction  
 
 #TESTING APPROVAL PROCESS IN GITHUB
 # Testing approval - Jcllee99
@@ -28,6 +29,7 @@ class Menu:
             file.write(f"{account_name}:{balance}\n")
         file.seek(0)
         self.account = Account(file)
+        self.transaction = Transaction()
         self.quit = False
         options = [Option("B", self.edit_balance), 
                    Option("I", self.add_income), 
@@ -52,85 +54,41 @@ class Menu:
         amount = getFloat("Enter Balance:")
         self.account.edit_balance(amount)
 
+
     def add_income(self):
         amount = getFloat("Enter Income:")
-        self.account.add_income(amount)
+        self.transaction.add_income(self.account, amount)
 
     def add_expense(self):
-        success = False
-        while not success:
-            amount = getFloat("Enter Expense:")
-            if amount > self.account.balance():
-                print("Not enough funds.")
-            else:
-                success = True
-        self.account.add_expense(amount)
-
-    # Mary added this ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
-    def load_account(self, filename="data.txt"):
-        file = open(filename, "a+")
-        file.seek(0)
-        first = file.readline()
-        if not first:
-            account_name = input("Enter account name: ")
-            balance = getFloat("Enter initial balance: ")
-            file.write(f"{account_name}:{balance}\\n")
-        file.seek(0)
-        self.account = Account(file)
-        print(f"Loaded account '{self.account.name}'")
+        amount = getFloat("Enter Expense:")
+        try:
+            self.transaction.add_expense(self.account, amount)
+        except ValueError as e:
+            print(e)
 
     def open_account(self):
-        filename = input("Enter new account filename (e.g., account2.txt): ")
-        account_name = input("Enter account name: ")
-        balance = getFloat("Enter initial balance: ")
-        with open(filename, "w") as f:
-            f.write(f"{account_name}:{balance}\\n")
-        self.load_account(filename)
+        self.account = self.account.open_account()
 
     def close_account(self):
-        if self.account:
-            self.account.file.close()
-            self.account = None
-            print("Account closed.")
+        self.account.close_account()
 
     def switch_accounts(self):
-        self.close_account()
-        filename = input("Enter filename of account to load: ")
-        self.load_account(filename)
+        self.account = self.account.switch_accounts()
 
     def list_all(self):
-        all_records = self.account.incomes + self.account.expenses
-        all_records.sort(key=lambda x: x.datetime)
-        for record in all_records:
+        for record in self.transaction.list_all():
             print(record)
 
     def transfer(self):
         target_file = input("Enter filename of account to transfer TO: ")
         amount = getFloat("Enter amount to transfer: ")
-        if amount > self.account.balance():
-            print("Not enough funds to transfer.")
-            return
         note = input("Enter note for the transfer: ")
-        self.account.add_expense(amount, category="Transfer", note=note)
-
-        with open(target_file, "r+") as f:
-            from classes import Account as TargetAccount
-            target = TargetAccount(f)
-            target.add_income(amount, category="Transfer", note=f"Received from {self.account.name}")
-        print("Transfer complete.")
+        result = self.transaction.transfer(self.account, target_file, amount, note)
+        print(result)
 
     def update_amount(self):
-        all_records = self.account.incomes + self.account.expenses
-        for idx, record in enumerate(all_records):
-            print(f"{idx}: {record}")
-        idx = int(input("Enter index of record to update: "))
-        new_amount = getFloat("Enter new amount: ")
-        if idx < len(self.account.incomes):
-            self.account.incomes[idx].amount = abs(new_amount)
-        else:
-            self.account.expenses[idx - len(self.account.incomes)].amount = abs(new_amount)
-        print("Record updated in memory. (Note: File update not implemented.)")
+        self.transaction.update_amount(self.account)
+
 
     def view_balance(self):
         print(f"Current balance of Account '{self.account.name}': {self.account.balance()}")
