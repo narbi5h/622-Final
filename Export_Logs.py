@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 class exportLogs:
-    def __init__(self, db_path: str = "insertdatabase.db"):
+    def __init__(self, db_path: str = "wallet.db"):
         self.db_path = db_path
-        self.logs = self.load_logs_with_balance()
+        self.logs = self.loadLogsWithBalance()
 
     def loadLogsWithBalance(self) -> List[Dict[str, Any]]:
         """Join exportLogs with ACCOUNT to include balance for sorting."""
@@ -49,7 +49,7 @@ class exportLogs:
         return results if results else [{"error": f"No logs found with balance {balance}"}]
 
 if __name__ == "__main__":
-    logs = exportLogs("insertdatabase.db")
+    logs = exportLogs("wallet.db")
 
     print("=== SORTED BY TIMESTAMP ===")
     for log in logs.sortByTimestamp():
