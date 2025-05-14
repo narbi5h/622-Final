@@ -2,7 +2,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-class Account:
+class Class_Account:
     def __init__(self, file):
         self.file = file
         lines = file.readlines()
@@ -35,7 +35,7 @@ class Account:
             balance = float(input("Enter initial balance: "))
             file.write(f"{account_name}:{balance}\n")
         file.seek(0)
-        return Account(file)
+        return Class_Account(file)
 
     def open_account(self):
         filename = input("Enter new account filename (e.g., account2.txt): ")

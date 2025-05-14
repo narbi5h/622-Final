@@ -1,6 +1,6 @@
 from Class_Account_type import AccountType
 from Class_User import User
-from Class_Account import Account  
+from Class_Account import Class_Account  
 from Export_Logs import exportLogs
 from Class_Transaction import Transaction  
 from TRANSACTION_TYPE import TRANSACTION_TYPE
