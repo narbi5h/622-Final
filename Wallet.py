@@ -1,4 +1,5 @@
-from classes import Account
+from Class_Account import Account  
+from Class_Transaction import Transaction  
 
 #TESTING APPROVAL PROCESS IN GITHUB
 # Testing approval - Jcllee99
@@ -28,11 +29,23 @@ class Menu:
             file.write(f"{account_name}:{balance}\n")
         file.seek(0)
         self.account = Account(file)
+        self.transaction = Transaction()
         self.quit = False
-        options = [Option("B", self.edit_balance), Option("I", self.add_income), Option("E", self.add_expense),
-                   Option("VB", self.view_balance), Option(
-                       "VI", self.view_incomes)
-                       , Option("VE", self.view_expenses),
+        options = [Option("B", self.edit_balance), 
+                   Option("I", self.add_income), 
+                   Option("E", self.add_expense),
+                   Option("VB", self.view_balance), 
+                   Option("VI", self.view_incomes), 
+                   Option("VE", self.view_expenses),
+
+                    # mary added this line to add a new function as an option
+                    Option("LA", self.list_all),          
+                    Option("SA", self.switch_accounts),  
+                    Option("CA", self.close_account),     
+                    Option("OA", self.open_account),      
+                    Option("TR", self.transfer),          
+                    Option("UA", self.update_amount),    
+
                    Option("Q", self.exit)]
         # TODO: add new functions as options (no sub menu)
         self.options = {option.code: option for option in options}
@@ -41,19 +54,41 @@ class Menu:
         amount = getFloat("Enter Balance:")
         self.account.edit_balance(amount)
 
+
     def add_income(self):
         amount = getFloat("Enter Income:")
-        self.account.add_income(amount)
+        self.transaction.add_income(self.account, amount)
 
     def add_expense(self):
-        success = False
-        while not success:
-            amount = getFloat("Enter Expense:")
-            if amount > self.account.balance():
-                print("Not enough funds.")
-            else:
-                success = True
-        self.account.add_expense(amount)
+        amount = getFloat("Enter Expense:")
+        try:
+            self.transaction.add_expense(self.account, amount)
+        except ValueError as e:
+            print(e)
+
+    def open_account(self):
+        self.account = self.account.open_account()
+
+    def close_account(self):
+        self.account.close_account()
+
+    def switch_accounts(self):
+        self.account = self.account.switch_accounts()
+
+    def list_all(self):
+        for record in self.transaction.list_all():
+            print(record)
+
+    def transfer(self):
+        target_file = input("Enter filename of account to transfer TO: ")
+        amount = getFloat("Enter amount to transfer: ")
+        note = input("Enter note for the transfer: ")
+        result = self.transaction.transfer(self.account, target_file, amount, note)
+        print(result)
+
+    def update_amount(self):
+        self.transaction.update_amount(self.account)
+
 
     def view_balance(self):
         print(f"Current balance of Account '{self.account.name}': {self.account.balance()}")
@@ -83,6 +118,12 @@ class Menu:
                   VB = View balance
                   VI = View incomes
                   VE = View expenditures
+                  LA = List all transactions        
+                  SA = Switch account              
+                  OA = Open new account            
+                  CA = Close current account       
+                  TR = Transfer to another account 
+                  UA = Update a transaction amount 
                   Q = Quit program
                 """)
             try:

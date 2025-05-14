@@ -1,7 +1,6 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import math
-
 #Testing pull and push - Jcllee99
 class Record:
     def __init__(self, amount: float, datetime: datetime, category: str, note: str):

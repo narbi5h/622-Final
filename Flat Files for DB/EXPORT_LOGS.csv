@@ -1,0 +1,11 @@
+export_id,account_id,timestamp,file_path
+EXP001,ACCT006,12/31/2024 10:59,/exports/log_exp001.csv
+EXP002,ACCT003,12/10/2024 0:36,/exports/log_exp002.csv
+EXP003,ACCT001,4/25/2025 10:11,/exports/log_exp003.csv
+EXP004,ACCT006,1/14/2025 5:51,/exports/log_exp004.csv
+EXP005,ACCT003,3/16/2025 14:13,/exports/log_exp005.csv
+EXP006,ACCT002,12/16/2024 14:38,/exports/log_exp006.csv
+EXP007,ACCT006,5/7/2025 6:11,/exports/log_exp007.csv
+EXP008,ACCT006,1/24/2025 14:21,/exports/log_exp008.csv
+EXP009,ACCT006,1/14/2025 13:34,/exports/log_exp009.csv
+EXP010,ACCT001,12/17/2024 2:32,/exports/log_exp010.csv
