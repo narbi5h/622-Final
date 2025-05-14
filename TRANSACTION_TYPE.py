@@ -12,7 +12,6 @@ class TRANSACTION_TYPE:
             {'type_id': 1, 'category_name': 'Income'},
             {'type_id': 2, 'category_name': 'Expense'},
             {'type_id': 3, 'category_name': 'Asset'},
-          
         ]
 
     def LIST_ALL(self):
@@ -46,3 +45,13 @@ class TRANSACTION_TYPE:
                 return f"Type ID {type_id} already exists"
         self.data.append({'type_id': type_id, 'category_name': category_name})
         return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
+
+    def GROUP(self):
+        """Group transaction types by the first letter of their category_name."""
+        grouped = {}
+        for item in self.data:
+            key = item['category_name'][0].upper()
+            if key not in grouped:
+                grouped[key] = []
+            grouped[key].append(item)
+        return grouped

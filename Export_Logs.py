@@ -48,20 +48,11 @@ class exportLogs:
         results = [log for log in self.logs if log['balance'] == balance]
         return results if results else [{"error": f"No logs found with balance {balance}"}]
 
-# if __name__ == "__main__":
-#     logs = exportLogs("walletApp.db")
-
-#     print("=== SORTED BY TIMESTAMP ===")
-#     for log in logs.sortByTimestamp():
-#         print(log)
-
-#     print("\n=== FIND BY EXPORT ID ===")
-#     print(logs.findByIndex(2))
-
-#     print("\n=== SORT BY MAX BALANCE ===")
-#     for log in logs.sortByMaxExpense():
-#         print(log)
-
-#     print("\n=== FIND BY BALANCE ===")
-#     balance = float(input("Enter balance to search by: "))
-#     print(logs.findByAmount(balance))
+    def add_export_log(self, account_id: int, file_path: str):
+        """Insert a new export log for an account."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute("""
+                INSERT INTO EXPORT_LOGS (account_id, timestamp, file_path)
+                VALUES (?, datetime('now'), ?)
+            """, (account_id, file_path))
+            conn.commit()

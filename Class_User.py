@@ -81,6 +81,51 @@ class User:
             )
             conn.commit()
 
+    def forgot_password(self, username: str, new_password: str):
+        """Allow user to reset password (e.g., forgot password flow)."""
+        new_hash = self._hash_password(new_password)
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute(
+                """
+                UPDATE users
+                   SET password_hash = ?
+                 WHERE username = ?
+                """,
+                (new_hash, username)
+            )
+            conn.commit()
+
+    def add_account(self, user_id: int, account_name: str, balance: float):
+        """Link a new account to a user."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute(
+                """
+                INSERT INTO accounts (user_id, name, balance)
+                VALUES (?, ?, ?)
+                """,
+                (user_id, account_name, balance)
+            )
+            conn.commit()
+
+    def close_account(self, account_id: int):
+        """Delete an account."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute("DELETE FROM accounts WHERE account_id = ?", (account_id,))
+            conn.commit()
+
+    def freeze_account(self, account_id: int):
+        """Freeze an account by setting is_enabled to 0."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute(
+                """
+                UPDATE accounts
+                   SET is_enabled = 0
+                 WHERE account_id = ?
+                """,
+                (account_id,)
+            )
+            conn.commit()
+
     def delete(self, user_id: int):
         """Remove a user from the database."""
         with sqlite3.connect(self.db_path) as conn:

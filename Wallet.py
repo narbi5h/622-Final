@@ -26,8 +26,9 @@ class Menu:
             balance = getFloat("Enter initial balance: ")
             file.write(f"{account_name}:{balance}\n")
         file.seek(0)
-        self.account = Account(file)
+        self.account = Class_Account(file)
         self.transaction = Transaction()
+        self.export_logs = exportLogs()
         self.quit = False
         options = [
             Option("B", self.edit_balance), 
@@ -108,24 +109,24 @@ class Menu:
 
     # Export Logs functionality
     def view_logs_by_index(self):
-        for log in self.export_logs.SORT_BY_INDEX():
+        for log in self.export_logs.sortByIndex():
             print(log)
 
     def view_logs_by_timestamp(self):
-        for log in self.export_logs.SORT_BY_TIMESTAMP():
+        for log in self.export_logs.sortByTimestamp():
             print(log)
 
     def find_log_by_id(self):
         try:
             log_id = int(input("Enter Export Log ID: "))
-            print(self.export_logs.FIND_BY_INDEX(log_id))
+            print(self.export_logs.findByIndex(log_id))
         except ValueError:
             print("Please enter a valid integer.")
 
     def find_log_by_balance(self):
         try:
             balance = float(input("Enter Balance to search for: "))
-            for log in self.export_logs.FIND_BY_AMOUNT(balance):
+            for log in self.export_logs.findByAmount(balance):
                 print(log)
         except ValueError:
             print("Please enter a valid number.")
