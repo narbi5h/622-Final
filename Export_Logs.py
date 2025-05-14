@@ -48,20 +48,20 @@ class exportLogs:
         results = [log for log in self.logs if log['balance'] == balance]
         return results if results else [{"error": f"No logs found with balance {balance}"}]
 
-if __name__ == "__main__":
-    logs = exportLogs("wallet.db")
+# if __name__ == "__main__":
+#     logs = exportLogs("wallet.db")
 
-    print("=== SORTED BY TIMESTAMP ===")
-    for log in logs.sortByTimestamp():
-        print(log)
+#     print("=== SORTED BY TIMESTAMP ===")
+#     for log in logs.sortByTimestamp():
+#         print(log)
 
-    print("\n=== FIND BY EXPORT ID ===")
-    print(logs.findByIndex(2))
+#     print("\n=== FIND BY EXPORT ID ===")
+#     print(logs.findByIndex(2))
 
-    print("\n=== SORT BY MAX BALANCE ===")
-    for log in logs.sortByMaxExpense():
-        print(log)
+#     print("\n=== SORT BY MAX BALANCE ===")
+#     for log in logs.sortByMaxExpense():
+#         print(log)
 
-    print("\n=== FIND BY BALANCE ===")
-    balance = float(input("Enter balance to search by: "))
-    print(logs.findByAmount(balance))
+#     print("\n=== FIND BY BALANCE ===")
+#     balance = float(input("Enter balance to search by: "))
+#     print(logs.findByAmount(balance))

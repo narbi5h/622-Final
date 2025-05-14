@@ -4,7 +4,7 @@ from Class_Account import Class_Account
 from Export_Logs import exportLogs
 from Class_Transaction import Transaction  
 from TRANSACTION_TYPE import TRANSACTION_TYPE
-# from Category import Category <- No script yet, should add after finishing
+from Categories import Categories
 from classes import Record, Income, Expense, Account
 import pandas as pd
 from datetime import datetime
@@ -15,7 +15,6 @@ def getFloat(prompt: str) -> float:
             return float(input(prompt))
         except ValueError:
             print("Please enter a number.")
-
 
 class Menu:
     def __init__(self):
