@@ -1,7 +1,5 @@
 import sqlite3
 from typing import List, Dict
-import random
-import uuid
 
 class User:
     def __init__(self, db_path: str = "walletApp.db"):
@@ -9,18 +7,19 @@ class User:
 
     def create(self, username: str, name: str, email: str, password: str):
         with sqlite3.connect(self.db_path) as conn:
-            cur = conn.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
-            new_id = str(uuid.uuid4())
-              
+            cur = conn.cursor()
 
-            conn.execute(
-                """
-                INSERT INTO users (user_id, username, name, email, password)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (new_id, username, name, email, password)
+            # Optional: check for existing username
+            cur.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+            if cur.fetchone():
+                print("Username already exists.")
+                return
+            cur.execute(
+                "INSERT INTO users (username, name, email, password) VALUES (?, ?, ?, ?)",
+                (username, name, email, password)
             )
             conn.commit()
+
 
     def get_by_id(self, user_id: str) -> Dict:
         with sqlite3.connect(self.db_path) as conn:
@@ -85,7 +84,9 @@ class User:
             if last_account_id:
                 new_account_id = f"{int(''.join(filter(str.isdigit, last_account_id[0]))) + 1:08d}"
             else:
-                new_account_id = "00000001"
+                last_id = last_account_id[0]
+                last_num = int(''.join(filter(str.isdigit, last_id)))
+                new_account_id = f"ACCT{last_num + 1:03d}"
 
             conn.execute(
                 "INSERT INTO account (account_id, user_id, account_type, balance) VALUES (?, ?, ?, ?)",

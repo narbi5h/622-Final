@@ -87,14 +87,13 @@ conn = sqlite3.connect(db_path)
 conn.execute("PRAGMA foreign_keys = ON;")
 cursor = conn.cursor()
 
-cursor.executescript("""
+cursor.executescript("""                     
 CREATE TABLE IF NOT EXISTS ACCOUNT_TYPE (
     account_type INTEGER PRIMARY KEY,
     type_name TEXT NOT NULL,
     is_enabled INTEGER NOT NULL DEFAULT 1
 );
-
-                                      
+                         
 CREATE TABLE IF NOT EXISTS USERS (
     user_id TEXT PRIMARY KEY,
     username TEXT NOT NULL,

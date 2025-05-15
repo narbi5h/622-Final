@@ -1,5 +1,7 @@
 import sqlite3
 from typing import List, Dict
+import os
+from datetime import datetime
 
 class Class_Account:
     def __init__(self, db_path: str = "walletApp.db"):
@@ -8,22 +10,24 @@ class Class_Account:
     def _connect(self):
         return sqlite3.connect(self.db_path)
 
-    def open_account(self, user_id: str, account_type: str, balance: float) -> str:
+    def open_account(self, user_id: int, account_type: str, balance: float) -> str:
         with self._connect() as conn:
             cur = conn.execute("SELECT account_id FROM account ORDER BY account_id DESC LIMIT 1")
             last = cur.fetchone()
-        if last:
-            last_id = last[0]
-            last_num = int(''.join(filter(str.isdigit, last_id)))
-            new_id = f"ACCT{last_num + 1:03d}"
-        else:
-            new_id = "ACCT001"
+            if last:
+                last_id = last[0]
+                last_num = int(''.join(filter(str.isdigit, last_id)))
+                new_id = f"ACCT{last_num + 1:03d}"
+            else:
+                new_id = "ACCT001"
+
             conn.execute("""
                 INSERT INTO account (account_id, user_id, account_type, balance)
                 VALUES (?, ?, ?, ?)
             """, (new_id, user_id, account_type, balance))
             conn.commit()
-        return new_id
+            return new_id
+
 
     def close_account(self, account_id: str) -> bool:
         with self._connect() as conn:

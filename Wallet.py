@@ -71,7 +71,11 @@ class Menu:
         self.transaction.update_amount(self.account_id)
 
     def view_balance(self):
-        print(f"Current balance: {self.account_manager.get_account(self.account_id)['balance']}")
+        acc = self.account_manager.get_account(self.account_id)
+        if acc:
+            print(f"Current balance: {acc['balance']}")
+        else:
+            print("Account not found.")
 
     def view_incomes(self):
         for income in self.transaction.list_all(self.account_id):
@@ -92,7 +96,12 @@ class Menu:
             print(record)
 
     def transfer(self):
-        print("Transfer not implemented in this version.")
+        to_id = input("Enter destination account ID: ").strip()
+        amount = getFloat("Enter amount to transfer: ")
+        note = input("Enter note for the transfer: ")
+        result = self.transaction.transfer(self.account_id, to_id, amount, note)
+        print(result)
+
 
     def switch_accounts(self):
         self.account_id = self.account_manager.switch_accounts(self.user_id)
