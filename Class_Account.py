@@ -20,6 +20,13 @@ class Class_Account:
                 new_id = f"ACCT{last_num + 1:03d}"
             else:
                 new_id = "ACCT001"
+            
+            if account_type.lower() == "ck":
+                account_type = "1"
+            elif account_type.lower() == "sv":
+                account_type = "2"
+            else:
+                raise ValueError("Invalid account type. Use 'ck' for checking or 'sv' for savings.")
 
             conn.execute("""
                 INSERT INTO account (account_id, user_id, account_type, balance)

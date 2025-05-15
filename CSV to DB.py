@@ -33,8 +33,8 @@ user_df["password"] = user_df["password"].astype(str).str.strip()
 
 ## ACCOUNT_TYPE
 account_type_df = account_type_df.rename(columns={"account_type": "type_name", "type_name": "account_type"})
-# account_type_df["account_type"] = pd.factorize(account_type_df["account_type"])[0] + 1
-account_type_df["account_type"] = account_type_df["account_type"].astype(str).str.strip()
+account_type_df["account_type"] = pd.factorize(account_type_df["account_type"])[0] + 1
+# account_type_df["account_type"] = account_type_df["account_type"].astype(str).str.strip()
 account_type_df["type_name"] = account_type_df["type_name"].astype(str).str.strip()
 account_type_df["is_enabled"] = 1
 

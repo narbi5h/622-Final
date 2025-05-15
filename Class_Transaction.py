@@ -46,10 +46,11 @@ class Transaction:
                 WHERE name = ? AND transaction_type_id = ?
             """, (category, type_id))
             row = cur.fetchone()
-            if last:
-                last_sub_id = last[0]
-                last_num = int(''.join(filter(str.isdigit, last_sub_id)))
-                sub_category_id = f"SC{last_num + 1:03d}"
+            sub_category_id = category
+            # if last:
+            #     last_sub_id = last[0]
+            #     last_num = int(''.join(filter(str.isdigit, last_sub_id)))
+            #     sub_category_id = f"SC{last_num + 1:03d}"
 
             conn.execute("""
                 INSERT INTO transactions (transaction_id, account_id, type_id, sub_category_id, amount, timestamp)
