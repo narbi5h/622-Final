@@ -1,9 +1,10 @@
 import sqlite3
 import pandas as pd
 import os
+from DATA_DICTIONARY import dataDictionary
 
 # Optional: Change working directory if needed
-os.chdir(r"c:\Users\jclle\OneDrive\Documents\GitHub\622-Final\Flat Files for DB")
+os.chdir(r"Flat Files for DB")
 
 # === Step 1: Remove existing database ===
 db_path = "walletApp.db"
@@ -148,3 +149,6 @@ conn.commit()
 conn.close()
 
 print("Database successfully created and populated.")
+
+# === Step 6: Create Data Dictionary ===
+dataDictionaryRecords = []
