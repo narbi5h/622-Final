@@ -75,7 +75,7 @@ class Menu:
             Option("GTT", self.group_transaction_types),
             Option("ADA", self.add_account_for_user),
             Option("CLA", self.close_user_account),
-            Option("FZA", self.freeze_account),
+            # Option("FZA", self.freeze_account),
             # Q to exit
             Option("Q", self.exit)
             ]
@@ -205,21 +205,21 @@ class Menu:
 
 
     def add_account_for_user(self):
-        user_id = int(input("User ID: "))
+        user_id = input("User ID: ")
         name = input("Account Name: ")
         balance = getFloat("Initial Balance: ")
         self.user.add_account(user_id, name, balance)
         print("Account added.")
 
     def close_user_account(self):
-        account_id = int(input("Account ID to close: "))
+        account_id = (input("Account ID to close: "))
         self.user.close_account(account_id)
         print("Account closed.")
 
-    def freeze_account(self):
-        account_id = int(input("Account ID to freeze: "))
-        self.user.freeze_account(account_id)
-        print("Account frozen.")
+    # def freeze_account(self):
+    #     account_id = (input("Account ID to freeze: "))
+    #     self.user.freeze_account(account_id)
+    #     print("Account frozen.")
 
     def change_account_type_name(self):
         type_id = int(input("Account Type ID: "))
@@ -228,7 +228,7 @@ class Menu:
         print("Account type name updated.")
 
     def disable_account_type(self):
-        type_id = int(input("Account Type ID to disable: "))
+        type_id = (input("Account Type ID to disable: "))
         self.account_type.disable_account(type_id)
         print("Account type disabled.")
 
