@@ -7,21 +7,19 @@ class User:
 
     def create(self, username: str, name: str, email: str, password: str):
         with sqlite3.connect(self.db_path) as conn:
-            cur = conn.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
-            last_user_id = cur.fetchone()
-            if last_user_id:
-                new_id = f"{int(''.join(filter(str.isdigit, last_user_id[0]))) + 1:08d}"
-            else:
-                new_id = "00000001"
+            cur = conn.cursor()
 
-            conn.execute(
-                """
-                INSERT INTO users (user_id, username, name, email, password)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (new_id, username, name, email, password)
+            # Optional: check for existing username
+            cur.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+            if cur.fetchone():
+                print("Username already exists.")
+                return
+            cur.execute(
+                "INSERT INTO users (username, name, email, password) VALUES (?, ?, ?, ?)",
+                (username, name, email, password)
             )
             conn.commit()
+
 
     def get_by_id(self, user_id: str) -> Dict:
         with sqlite3.connect(self.db_path) as conn:
