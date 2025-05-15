@@ -72,7 +72,7 @@ transaction_df = transaction_df.merge(
     how="left"
 )
 transaction_df.rename(columns={"transaction_type_id": "type_id"}, inplace=True)
-transaction_df = transaction_df.drop(columns=["sub_category_id"])
+# transaction_df = transaction_df.drop(columns=["sub_category_id"])
 transaction_df["type_id"] = transaction_df["type_id"].astype(int)
 
 ## EXPORT_LOGS
@@ -126,11 +126,13 @@ CREATE TABLE IF NOT EXISTS CATEGORIES (
 CREATE TABLE IF NOT EXISTS TRANSACTIONS (
     transaction_id TEXT PRIMARY KEY,
     account_id TEXT NOT NULL,
+    sub_category_id TEXT NOT NULL,
     type_id INTEGER NOT NULL,
     amount REAL NOT NULL,
     timestamp TEXT NOT NULL,
     FOREIGN KEY (account_id) REFERENCES ACCOUNT(account_id),
     FOREIGN KEY (type_id) REFERENCES TRANSACTION_TYPE(transaction_type_id)
+    FOREIGN KEY (sub_category_id) REFERENCES CATEGORIES(sub_category_id)
 );
 
 CREATE TABLE IF NOT EXISTS EXPORT_LOGS (

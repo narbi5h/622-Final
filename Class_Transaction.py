@@ -12,7 +12,7 @@ class Transaction:
     def list_all(self, account_id: str):
         with self._connect() as conn:
             cur = conn.execute("""
-                SELECT amount, timestamp, type_id
+                SELECT amount, timestamp, type_id, sub_category_id
                 FROM transactions
                 WHERE account_id = ?
                 ORDER BY timestamp
@@ -46,12 +46,15 @@ class Transaction:
                 WHERE name = ? AND transaction_type_id = ?
             """, (category, type_id))
             row = cur.fetchone()
-            sub_category_id = row[0] if row else "000"
+            if last:
+                last_sub_id = last[0]
+                last_num = int(''.join(filter(str.isdigit, last_sub_id)))
+                sub_category_id = f"SC{last_num + 1:03d}"
 
             conn.execute("""
-                INSERT INTO transactions (transaction_id, account_id, type_id, amount, timestamp)
-                VALUES (?, ?, ?, ?, ?)
-            """, (new_id, account_id, type_id, amount, timestamp))
+                INSERT INTO transactions (transaction_id, account_id, type_id, sub_category_id, amount, timestamp)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (new_id, account_id, type_id, sub_category_id, amount, timestamp))
 
             # Update account balance
             new_balance = self._get_balance(account_id) + amount

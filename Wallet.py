@@ -62,8 +62,9 @@ class Menu:
 
     def add_expense(self):
         amount = getFloat("Enter Expense:")
+        category = input("Enter category (default is 'Other'): ") or "Other"
         try:
-            self.transaction.add_expense(self.account_id, amount)
+            self.transaction.add_expense(self.account_id, amount, category)
         except ValueError as e:
             print(e)
 
