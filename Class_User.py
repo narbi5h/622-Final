@@ -86,7 +86,7 @@ class User:
         new_hash = self._hash_password(new_password)
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
-                "UPDATE users SET password_hash = ? WHERE user_id = ?",
+                "UPDATE users SET password = ? WHERE user_id = ?",
                 (new_hash, user_id)
             )
             conn.commit()
@@ -98,7 +98,7 @@ class User:
             conn.execute(
                 """
                 UPDATE users
-                   SET password_hash = ?
+                   SET password = ?
                  WHERE username = ?
                 """,
                 (new_hash, username)
