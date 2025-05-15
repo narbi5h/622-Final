@@ -38,7 +38,7 @@ for table_name, df in dataframes.items():
 data_dictionary_df = pd.DataFrame(data_dictionary_records, columns=["Column name", "Type", "Table"])
 
 # Connect to SQLite database
-conn = sqlite3.connect("walletTest.db")
+conn = sqlite3.connect("walletApp.db")
 cursor = conn.cursor()
 
 # Create table for data dictionary
