@@ -158,14 +158,14 @@ class Menu:
             print("Please enter a valid number.")
     
     def create_user(self):
-        # name = input("Name: ")
-        # email = input("Email: ")
+        name = input("Name: ")
+        email = input("Email: ")
         username = input("Username: ")
         password = input("Password: ")
-        self.user.create(username, password)
+        self.user.create(username, name, email, password)
         print("User created.")
 
-    def login_user(self):
+    def login_user(self): 
         username = input("Username: ")
         password = input("Password: ")
         if self.user.authenticate(username, password):

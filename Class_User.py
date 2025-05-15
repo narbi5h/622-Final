@@ -11,7 +11,7 @@ class User:
         """Return a SHA‑256 hash of the given password."""
         return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
-    def create(self, username: str, password: str):
+    def create(self, username: str, name:str, email:str, password: str):
         """
         Add a new user with credentials.
         Stores the SHA‑256 hash of the password.
@@ -27,10 +27,10 @@ class User:
 
             conn.execute(
             """
-            INSERT INTO users (user_id, username, password)
-            VALUES (?, ?, ?)
+            INSERT INTO users (user_id, username, name, email, password)
+            VALUES (?,?, ?, ?, ?)
             """,
-            (new_user_id, username, pwd_hash)
+            (new_user_id, username, name, email, pwd_hash)
             )
             conn.commit()
 
@@ -48,7 +48,7 @@ class User:
         """Fetch full user record (including password_hash) by username."""
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.execute(
-                "SELECT user_id, name, email, username, password_hash FROM users WHERE username = ?",
+                "SELECT user_id, name, email, username, password FROM users WHERE username = ?",
                 (username,)
             )
             row = cur.fetchone()
@@ -59,7 +59,7 @@ class User:
             "name":         row[1],
             "email":        row[2],
             "username":     row[3],
-            "password_hash":row[4]
+            "password":row[4]
         }
 
     def authenticate(self, username: str, password: str) -> bool:
@@ -70,7 +70,7 @@ class User:
         user = self.get_by_username(username)
         if not user:
             return False
-        return user["password_hash"] == self._hash_password(password)
+        return user["password"] == self._hash_password(password)
 
     def update_email(self, user_id: int, new_email: str):
         """Update the email address for an existing user."""

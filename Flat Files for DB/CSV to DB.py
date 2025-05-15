@@ -27,6 +27,8 @@ user_df.rename(columns={"pw": "password"}, inplace=True)
 user_df = user_df.dropna(subset=["user_id", "username", "password"])
 user_df["user_id"] = user_df["user_id"].astype(str).str.strip()
 user_df["username"] = user_df["username"].astype(str).str.strip()
+user_df["name"] = user_df["name"].astype(str).str.strip()
+user_df["email"] = user_df["email"].astype(str).str.strip()
 user_df["password"] = user_df["password"].astype(str).str.strip()
 
 ## ACCOUNT_TYPE (fix mislabeled columns)
@@ -93,6 +95,8 @@ CREATE TABLE IF NOT EXISTS ACCOUNT_TYPE (
 CREATE TABLE IF NOT EXISTS USERS (
     user_id TEXT PRIMARY KEY,
     username TEXT NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
     password TEXT NOT NULL
 );
 
