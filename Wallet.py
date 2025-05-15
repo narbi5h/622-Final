@@ -30,6 +30,10 @@ class Menu:
         self.transaction = Transaction()
         self.export_logs = exportLogs()
         self.quit = False
+        self.user = User()
+        self.account_type = AccountType()
+        self.categories = Categories()
+        self.transaction_type = TRANSACTION_TYPE()
         options = [
             Option("B", self.edit_balance), 
             Option("I", self.add_income), 
@@ -49,6 +53,29 @@ class Menu:
             Option("XT", self.view_logs_by_timestamp),
             Option("XF", self.find_log_by_id),
             Option("XB", self.find_log_by_balance), 
+            Option("CU", self.create_user),
+            Option("LU", self.login_user),
+            Option("FPW", self.forgot_password),
+            Option("AAT", self.add_account_type),
+            Option("LAT", self.list_account_types),
+            Option("CNAT", self.change_account_type_name),
+            Option("DACT", self.disable_account_type),
+            Option("ENACT", self.enable_account_type),
+            Option("GAT", self.get_account_type_details),
+            Option("AC", self.add_category),
+            Option("UC", self.update_category),
+            Option("DC", self.delete_category),
+            Option("LC", self.list_categories),
+            Option("SC", self.sort_categories),
+            Option("LTT", self.list_transaction_types),
+            Option("ATT", self.add_transaction_type),
+            Option("UTT", self.update_transaction_type_name),
+            Option("DTT", self.delete_transaction_type),
+            Option("STT", self.search_transaction_type),
+            Option("GTT", self.group_transaction_types),
+            Option("ADA", self.add_account_for_user),
+            Option("CLA", self.close_user_account),
+            Option("FZA", self.freeze_account),
             # Q to exit
             Option("Q", self.exit)
             ]
@@ -107,7 +134,6 @@ class Menu:
         Total_expense = sum(expense.amount for expense in self.account.expenses)
         print(f"Current Expense: {Total_expense}")
 
-    # Export Logs functionality
     def view_logs_by_index(self):
         for log in self.export_logs.sortByIndex():
             print(log)
@@ -130,6 +156,129 @@ class Menu:
                 print(log)
         except ValueError:
             print("Please enter a valid number.")
+    
+    def create_user(self):
+        name = input("Name: ")
+        email = input("Email: ")
+        username = input("Username: ")
+        password = input("Password: ")
+        self.user.create(name, email, username, password)
+        print("User created.")
+
+    def login_user(self):
+        username = input("Username: ")
+        password = input("Password: ")
+        if self.user.authenticate(username, password):
+            print("Login successful.")
+        else:
+            print("Login failed.")
+
+    def forgot_password(self):
+        username = input("Username: ")
+        new_password = input("New password: ")
+        self.user.forgot_password(username, new_password)
+        print("Password has been reset.")
+
+    def add_account_type(self):
+        name = input("Account Type Name: ")
+        description = input("Description: ")
+        self.account_type.add_account_type(name, description)
+        print("Account type added.")
+
+    def list_account_types(self):
+        types = self.account_type.list_all()
+        for t in types:
+            print(t)
+
+    def list_transaction_types(self):
+        for ttype in self.transaction_type.LIST_ALL():
+            print(ttype)
+
+    def add_category(self):
+        name = input("Category name: ")
+        print(self.categories.add(name))
+
+    def list_categories(self):
+        categories = self.categories.view()
+        for c in categories:
+            print(c)
+
+
+    def add_account_for_user(self):
+        user_id = int(input("User ID: "))
+        name = input("Account Name: ")
+        balance = getFloat("Initial Balance: ")
+        self.user.add_account(user_id, name, balance)
+        print("Account added.")
+
+    def close_user_account(self):
+        account_id = int(input("Account ID to close: "))
+        self.user.close_account(account_id)
+        print("Account closed.")
+
+    def freeze_account(self):
+        account_id = int(input("Account ID to freeze: "))
+        self.user.freeze_account(account_id)
+        print("Account frozen.")
+
+    def change_account_type_name(self):
+        type_id = int(input("Account Type ID: "))
+        new_name = input("New Name: ")
+        self.account_type.change_account_type_name(type_id, new_name)
+        print("Account type name updated.")
+
+    def disable_account_type(self):
+        type_id = int(input("Account Type ID to disable: "))
+        self.account_type.disable_account(type_id)
+        print("Account type disabled.")
+
+    def enable_account_type(self):
+        type_id = int(input("Account Type ID to enable: "))
+        self.account_type.enable_account(type_id)
+        print("Account type enabled.")
+
+    def get_account_type_details(self):
+        type_id = int(input("Account Type ID: "))
+        print(self.account_type.get_account_details(type_id))
+
+    def update_category(self):
+        category_id = int(input("Category ID: "))
+        new_name = input("New Name: ")
+        print(self.categories.update(category_id, new_name))
+
+    def delete_category(self):
+        category_id = int(input("Category ID to delete: "))
+        print(self.categories.delete(category_id))
+
+    def sort_categories(self):
+        for row in self.categories.sort():
+            print(row)
+
+    def add_transaction_type(self):
+        type_id = int(input("Transaction Type ID: "))
+        name = input("Category Name: ")
+        print(self.transaction_type.ADD(type_id, name))
+
+    def update_transaction_type_name(self):
+        type_id = int(input("Transaction Type ID: "))
+        new_name = input("New Name: ")
+        print(self.transaction_type.UPDATE_NAME(type_id, new_name))
+
+    def delete_transaction_type(self):
+        type_id = int(input("Transaction Type ID to delete: "))
+        print(self.transaction_type.DELETE_TYPE(type_id))
+
+    def search_transaction_type(self):
+        keyword = input("Keyword to search: ")
+        for result in self.transaction_type.SEARCH(keyword):
+            print(result)
+
+    def group_transaction_types(self):
+        grouped = self.transaction_type.GROUP()
+        for letter, types in grouped.items():
+            print(f"{letter}:")
+            for t in types:
+                print(f"  {t}")
 
     def exit(self):
         self.quit = True
@@ -137,27 +286,38 @@ class Menu:
     def loop(self):
         self.quit = False
         while not self.quit:
-            print("""Please choose from the following actions:
-                  B = Edit balance
-                  I = Add income
-                  E = Add expenditure
-                  VB = View balance
-                  VI = View incomes
-                  VE = View expenditures
-                  LA = List all transactions        
-                  SA = Switch account              
-                  OA = Open new account            
-                  CA = Close current account       
-                  TR = Transfer to another account 
-                  UA = Update a transaction amount
+            print("""
+            Please choose from the following actions:
 
-                  XL = View export logs (by index)
-                  XT = View export logs (by timestamp)
-                  XF = Find export log by ID
-                  XB = Find export logs by balance
+            Account Operations:
+            B = Edit balance       I = Add income         E = Add expenditure
+            VB = View balance      VI = View incomes      VE = View expenditures
+            LA = List transactions TR = Transfer funds    UA = Update transaction
+            OA = Open account      SA = Switch account    CA = Close account
 
-                  Q = Quit program
-                """)
+            Export Logs:
+            XL = Logs by index     XT = Logs by timestamp
+            XF = Find log by ID    XB = Find logs by balance
+
+            User Management:
+            CU = Create user       LU = Login user        FPW = Forgot password
+            ADA = Add user account CLA = Close user acct  FZA = Freeze account
+
+            Account Types:
+            AAT = Add type         LAT = List types       CNAT = Change type name
+            DACT = Disable type    ENACT = Enable type    GAT = Get type details
+
+            Categories:
+            AC = Add category      UC = Update category   DC = Delete category
+            LC = List categories   SC = Sort categories
+
+            Transaction Types:
+            LTT = List types       ATT = Add type         UTT = Update type
+            DTT = Delete type      STT = Search types     GTT = Group types
+
+            Q = Quit program
+            """)
+
             try:
                 self.options[input("Option: ")].execute()
             except KeyError:
