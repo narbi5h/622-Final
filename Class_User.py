@@ -11,16 +11,26 @@ class User:
         """Return a SHA‑256 hash of the given password."""
         return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
-    def create(self, name: str, email: str, username: str, password: str):
+    def create(self, username: str, password: str):
         """
         Add a new user with credentials.
         Stores the SHA‑256 hash of the password.
         """
         pwd_hash = self._hash_password(password)
         with sqlite3.connect(self.db_path) as conn:
+            cur = conn.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
+            last_user_id = cur.fetchone()
+            if last_user_id and "_" in last_user_id[0]:
+                new_user_id = f"user_{int(last_user_id[0].split('_')[1]) + 1}"
+            else:
+                new_user_id = "user_1"
+
             conn.execute(
-                "INSERT INTO users (name, email, username, password_hash) VALUES (?, ?, ?, ?)",
-                (name, email, username, pwd_hash)
+            """
+            INSERT INTO users (user_id, username, password)
+            VALUES (?, ?, ?)
+            """,
+            (new_user_id, username, pwd_hash)
             )
             conn.commit()
 
