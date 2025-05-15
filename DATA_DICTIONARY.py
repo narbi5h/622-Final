@@ -8,17 +8,17 @@ def dataDictionary():
     It reads CSV files, infers data types, and stores the data dictionary in a SQLite table.
     """
     # Optional: Change working directory if needed
-    os.chdir(r"Flat Files for DB")
+    # os.chdir()
 
     # Load CSVs
     csv_files = {
-        "USER": "USER.csv",
-        "ACCOUNT_TYPE": "ACCOUNT_TYPE.csv",
-        "ACCOUNT": "ACCOUNT.csv",
-        "TRANSACTION_TYPE": "TRANSACTION_TYPE.csv",
-        "CATEGORIES": "CATEGORIES.csv",
-        "TRANSACTION": "TRANSACTION.csv",
-        "EXPORT_LOGS": "EXPORT_LOGS.csv"
+        "USER": "Flat Files for DB/USER.csv",
+        "ACCOUNT_TYPE": "Flat Files for DB/ACCOUNT_TYPE.csv",
+        "ACCOUNT": "Flat Files for DB/ACCOUNT.csv",
+        "TRANSACTION_TYPE": "Flat Files for DB/TRANSACTION_TYPE.csv",
+        "CATEGORIES": "Flat Files for DB/CATEGORIES.csv",
+        "TRANSACTION": "Flat Files for DB/TRANSACTION.csv",
+        "EXPORT_LOGS": "Flat Files for DB/EXPORT_LOGS.csv"
     }
 
     # Dictionary to store dataframes

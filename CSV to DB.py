@@ -4,7 +4,7 @@ import os
 from DATA_DICTIONARY import dataDictionary
 
 # Optional: Change working directory if needed
-os.chdir(r"Flat Files for DB")
+# os.chdir()
 
 # === Step 1: Remove existing database ===
 db_path = "walletApp.db"
@@ -12,13 +12,13 @@ if os.path.exists(db_path):
     os.remove(db_path)
 
 # === Step 2: Load CSVs ===
-user_df = pd.read_csv("USER.csv")
-account_type_df = pd.read_csv("ACCOUNT_TYPE.csv")
-account_df = pd.read_csv("ACCOUNT.csv")
-transaction_type_df = pd.read_csv("TRANSACTION_TYPE.csv")
-categories_df = pd.read_csv("CATEGORIES.csv")
-transaction_df = pd.read_csv("TRANSACTION.csv")
-export_logs_df = pd.read_csv("EXPORT_LOGS.csv")
+user_df = pd.read_csv("Flat Files for DB/USER.csv")
+account_type_df = pd.read_csv("Flat Files for DB/ACCOUNT_TYPE.csv")
+account_df = pd.read_csv("Flat Files for DB/ACCOUNT.csv")
+transaction_type_df = pd.read_csv("Flat Files for DB/TRANSACTION_TYPE.csv")
+categories_df = pd.read_csv("Flat Files for DB/CATEGORIES.csv")
+transaction_df = pd.read_csv("Flat Files for DB/TRANSACTION.csv")
+export_logs_df = pd.read_csv("Flat Files for DB/EXPORT_LOGS.csv")
 
 # === Step 3: Clean and transform data ===
 
