@@ -86,7 +86,9 @@ class User:
             if last_account_id:
                 new_account_id = f"{int(''.join(filter(str.isdigit, last_account_id[0]))) + 1:08d}"
             else:
-                new_account_id = "00000001"
+                last_id = last_account_id[0]
+                last_num = int(''.join(filter(str.isdigit, last_id)))
+                new_account_id = f"ACCT{last_num + 1:03d}"
 
             conn.execute(
                 "INSERT INTO account (account_id, user_id, account_type, balance) VALUES (?, ?, ?, ?)",

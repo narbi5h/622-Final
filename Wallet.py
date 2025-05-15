@@ -96,7 +96,12 @@ class Menu:
             print(record)
 
     def transfer(self):
-        print("Transfer not implemented in this version.")
+        to_id = input("Enter destination account ID: ").strip()
+        amount = getFloat("Enter amount to transfer: ")
+        note = input("Enter note for the transfer: ")
+        result = self.transaction.transfer(self.account_id, to_id, amount, note)
+        print(result)
+
 
     def switch_accounts(self):
         self.account_id = self.account_manager.switch_accounts(self.user_id)

@@ -24,7 +24,8 @@ class AccountType:
         """RETURN all account types, including their enabled/disabled status."""
         sql = """
         SELECT type_id, name, description, is_enabled
-          FROM account_types
+         FROM account_types"
+
         """
         return self._fetchall(sql)
 
