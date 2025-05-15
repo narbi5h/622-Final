@@ -1,64 +1,64 @@
-#import the necessary libraries
-import json
-from typing import List, Dict, Any
-import pandas as pd
-
-#TRANSACTION_TYPE CLASS
+import sqlite3
+from typing import List, Dict
 
 class TRANSACTION_TYPE:
-    def __init__(self):
-        # Example dataset
-        self.data = [
-            {'type_id': 1, 'category_name': 'Income'},
-            {'type_id': 2, 'category_name': 'Expense'},
-            {'type_id': 3, 'category_name': 'Asset'},
-        ]
+    def __init__(self, db_path: str = "walletApp.db"):
+        self.db_path = db_path
 
-    def LIST_ALL(self):
-        """List all transaction types."""
-        return self.data
+    def _connect(self):
+        return sqlite3.connect(self.db_path)
 
-    def UPDATE_NAME(self, type_id, new_name):
-        """Update the category_name of a given type_id."""
-        for item in self.data:
-            if item['type_id'] == type_id:
-                item['category_name'] = new_name
-                return f"Updated type_id {type_id} to new name '{new_name}'"
-        return "Type ID not found"
+    def LIST_ALL(self) -> List[Dict]:
+        with self._connect() as conn:
+            cur = conn.execute("SELECT transaction_type_id, category_name FROM TRANSACTION_TYPE")
+            return [{"type_id": row[0], "category_name": row[1]} for row in cur.fetchall()]
 
-    def DELETE_TYPE(self, type_id):
-        """Delete a transaction type by type_id."""
-        for i, item in enumerate(self.data):
-            if item['type_id'] == type_id:
-                del self.data[i]
-                return f"Deleted type_id {type_id}"
-        return "Type ID not found"
+    def UPDATE_NAME(self, type_id: int, new_name: str) -> str:
+        with self._connect() as conn:
+            cur = conn.execute(
+                "UPDATE TRANSACTION_TYPE SET category_name = ? WHERE transaction_type_id = ?",
+                (new_name, type_id)
+            )
+            conn.commit()
+            return f"Updated type_id {type_id} to new name '{new_name}'" if cur.rowcount > 0 else "Type ID not found"
 
-    def SEARCH(self, keyword):
-        """Search for transaction types containing the keyword in category_name."""
-        return [item for item in self.data if keyword.lower() in item['category_name'].lower()]
+    def DELETE_TYPE(self, type_id: int) -> str:
+        with self._connect() as conn:
+            cur = conn.execute("DELETE FROM TRANSACTION_TYPE WHERE transaction_type_id = ?", (type_id,))
+            conn.commit()
+            return f"Deleted type_id {type_id}" if cur.rowcount > 0 else "Type ID not found"
 
-    def ADD(self, type_id, category_name):
-        """Add a new transaction type."""
-        for item in self.data:
-            if item['type_id'] == type_id:
+    def SEARCH(self, keyword: str) -> List[Dict]:
+        with self._connect() as conn:
+            cur = conn.execute(
+                "SELECT transaction_type_id, category_name FROM TRANSACTION_TYPE WHERE category_name LIKE ?",
+                (f"%{keyword}%",)
+            )
+            return [{"type_id": row[0], "category_name": row[1]} for row in cur.fetchall()]
+
+    def ADD(self, type_id: int, category_name: str) -> str:
+        with self._connect() as conn:
+            cur = conn.execute("SELECT 1 FROM TRANSACTION_TYPE WHERE transaction_type_id = ?", (type_id,))
+            if cur.fetchone():
                 return f"Type ID {type_id} already exists"
-        self.data.append({'type_id': type_id, 'category_name': category_name})
-        return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
+            conn.execute(
+                "INSERT INTO TRANSACTION_TYPE (transaction_type_id, category_name) VALUES (?, ?)",
+                (type_id, category_name)
+            )
+            conn.commit()
+            return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
 
-    def GROUP(self):
-        """Recursively group transaction types by the first letter of their category_name."""
-
+    def GROUP(self) -> Dict[str, List[Dict]]:
+        all_types = self.LIST_ALL()
         grouped = {}
 
         def helper(index):
-            if index < len(self.data):
-                item = self.data[index]
-                key = item['category_name'][0].upper()
-                if key not in grouped:
-                    grouped[key] = []
-                grouped[key].append(item)
-                helper(index + 1)
+            if index >= len(all_types):
+                return
+            item = all_types[index]
+            key = item["category_name"][0].upper()
+            grouped.setdefault(key, []).append(item)
+            helper(index + 1)
 
         helper(0)
         return grouped

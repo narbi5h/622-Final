@@ -1,5 +1,4 @@
 import sqlite3
-import hashlib
 from typing import List, Dict
 
 class User:
@@ -7,7 +6,6 @@ class User:
         self.db_path = db_path
 
     def create(self, username: str, name: str, email: str, password: str):
-        """Create a user, store plaintext password in `pw` column."""
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
             last_user_id = cur.fetchone()
@@ -18,7 +16,7 @@ class User:
 
             conn.execute(
                 """
-                INSERT INTO users (user_id, username, name, email, pw)
+                INSERT INTO users (user_id, username, name, email, password)
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (new_id, username, name, email, password)
@@ -37,7 +35,7 @@ class User:
     def get_by_username(self, username: str) -> Dict:
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.execute(
-                "SELECT user_id, name, email, username, pw FROM users WHERE username = ?",
+                "SELECT user_id, name, email, username, password FROM users WHERE username = ?",
                 (username,)
             )
             row = cur.fetchone()
@@ -55,7 +53,7 @@ class User:
         user = self.get_by_username(username)
         if not user:
             return False
-        return user["password"] == password  # plaintext comparison
+        return user["password"] == password
 
     def update_email(self, user_id: str, new_email: str):
         with sqlite3.connect(self.db_path) as conn:
@@ -68,7 +66,7 @@ class User:
     def update_password(self, user_id: str, new_password: str):
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
-                "UPDATE users SET pw = ? WHERE user_id = ?",
+                "UPDATE users SET password = ? WHERE user_id = ?",
                 (new_password, user_id)
             )
             conn.commit()
@@ -76,13 +74,12 @@ class User:
     def forgot_password(self, username: str, new_password: str):
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
-                "UPDATE users SET pw = ? WHERE username = ?",
+                "UPDATE users SET password = ? WHERE username = ?",
                 (new_password, username)
             )
             conn.commit()
 
     def add_account(self, user_id: str, account_type: str, balance: float):
-        """Corrected: add account using correct column names."""
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.execute("SELECT account_id FROM account ORDER BY account_id DESC LIMIT 1")
             last_account_id = cur.fetchone()
@@ -92,13 +89,12 @@ class User:
                 new_account_id = "00000001"
 
             conn.execute(
-            "INSERT INTO account (account_id, user_id, account_type, balance) VALUES (?, ?, ?, ?)",
-            (new_account_id, user_id, account_type, balance)
+                "INSERT INTO account (account_id, user_id, account_type, balance) VALUES (?, ?, ?, ?)",
+                (new_account_id, user_id, account_type, balance)
             )
             conn.commit()
 
     def close_account(self, account_id: str):
-        """Remove an account entry."""
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("DELETE FROM account WHERE account_id = ?", (account_id,))
             conn.commit()

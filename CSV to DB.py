@@ -31,10 +31,11 @@ user_df["name"] = user_df["name"].astype(str).str.strip()
 user_df["email"] = user_df["email"].astype(str).str.strip()
 user_df["password"] = user_df["password"].astype(str).str.strip()
 
-## ACCOUNT_TYPE (fix mislabeled columns)
+## ACCOUNT_TYPE
 account_type_df = account_type_df.rename(columns={"account_type": "type_name", "type_name": "account_type"})
 account_type_df["account_type"] = pd.factorize(account_type_df["account_type"])[0] + 1
 account_type_df["type_name"] = account_type_df["type_name"].astype(str).str.strip()
+account_type_df["is_enabled"] = 1
 
 ## ACCOUNT
 account_df = account_df.dropna(subset=["account_id", "user_id", "account_type", "balance"])
@@ -89,9 +90,11 @@ cursor = conn.cursor()
 cursor.executescript("""
 CREATE TABLE IF NOT EXISTS ACCOUNT_TYPE (
     account_type INTEGER PRIMARY KEY,
-    type_name TEXT NOT NULL
+    type_name TEXT NOT NULL,
+    is_enabled INTEGER NOT NULL DEFAULT 1
 );
 
+                                      
 CREATE TABLE IF NOT EXISTS USERS (
     user_id TEXT PRIMARY KEY,
     username TEXT NOT NULL,
@@ -155,4 +158,4 @@ conn.close()
 print("Database successfully created and populated.")
 
 # === Step 6: Create Data Dictionary ===
-dataDictionaryRecords = []
+dataDictionary = []

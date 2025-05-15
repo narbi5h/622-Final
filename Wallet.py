@@ -6,7 +6,6 @@ from Class_Transaction import Transaction
 from TRANSACTION_TYPE import TRANSACTION_TYPE
 from Categories import Categories
 from classes import Record, Income, Expense, Account
-import pandas as pd
 from datetime import datetime
 
 def getFloat(prompt: str) -> float:
@@ -18,121 +17,94 @@ def getFloat(prompt: str) -> float:
 
 class Menu:
     def __init__(self):
-        file = open('data.txt', "a+")
-        file.seek(0)
-        first = file.readline()
-        if first:
-            account_name = input("Enter account name: ")
-            balance = getFloat("Enter initial balance: ")
-            file.write(f"{account_name}:{balance}\n")
-        file.seek(0)
-        self.account = Class_Account(file)
-        self.transaction = Transaction()
-        self.export_logs = exportLogs()
         self.quit = False
         self.user = User()
         self.account_type = AccountType()
         self.categories = Categories()
+        self.transaction = Transaction()
+        self.export_logs = exportLogs()
         self.transaction_type = TRANSACTION_TYPE()
-        options = [
-            Option("B", self.edit_balance), 
-            Option("I", self.add_income), 
-            Option("E", self.add_expense),
-            Option("VB", self.view_balance), 
-            Option("VI", self.view_incomes), 
-            Option("VE", self.view_expenses),
-            # mary added this line to add a new function as an option
-            Option("LA", self.list_all),          
-            Option("SA", self.switch_accounts),  
-            Option("CA", self.close_account),     
-            Option("OA", self.open_account),      
-            Option("TR", self.transfer),          
-            Option("UA", self.update_amount),   
-            # adding new functions as options (no sub menu)
-            Option("XL", self.view_logs_by_index),
-            Option("XT", self.view_logs_by_timestamp),
-            Option("XF", self.find_log_by_id),
-            Option("XB", self.find_log_by_balance), 
-            Option("CU", self.create_user),
-            Option("LU", self.login_user),
-            Option("FPW", self.forgot_password),
-            Option("AAT", self.add_account_type),
-            Option("LAT", self.list_account_types),
-            Option("CNAT", self.change_account_type_name),
-            Option("DACT", self.disable_account_type),
-            Option("ENACT", self.enable_account_type),
-            Option("GAT", self.get_account_type_details),
-            Option("AC", self.add_category),
-            Option("UC", self.update_category),
-            Option("DC", self.delete_category),
-            Option("LC", self.list_categories),
-            Option("SC", self.sort_categories),
-            Option("LTT", self.list_transaction_types),
-            Option("ATT", self.add_transaction_type),
-            Option("UTT", self.update_transaction_type_name),
-            Option("DTT", self.delete_transaction_type),
-            Option("STT", self.search_transaction_type),
-            Option("GTT", self.group_transaction_types),
-            Option("ADA", self.add_account_for_user),
-            Option("CLA", self.close_user_account),
-            # Option("FZA", self.freeze_account),
-            # Q to exit
-            Option("Q", self.exit)
-            ]
-        self.options = {option.code: option for option in options}
+
+        # User login or creation
+        while True:
+            choice = input("Are you an existing user? (Y/N): ").strip().upper()
+            if choice == "N":
+                self.create_user()
+            elif choice == "Y":
+                if self.login_user():
+                    break
+                else:
+                    print("Login failed. Please try again.")
+            else:
+                print("Invalid input. Please enter 'Y' or 'N'.")
+
+        # Select an account
+        print(f"Welcome, {self.current_user['name']}!")
+
+        self.user_id = self.current_user["user_id"]
+        self.account_manager = Class_Account()
+        accounts = self.account_manager.list_accounts(self.user_id)
+        if not accounts:
+            print("No accounts found. Let's create one.")
+            name = input("Enter account type name (e.g. 'Checking'): ")
+            balance = getFloat("Enter starting balance: ")
+            self.account_id = self.account_manager.open_account(self.user_id, name, balance)
+        else:
+            self.account_id = self.account_manager.switch_accounts(self.user_id)
 
     def edit_balance(self):
         amount = getFloat("Enter Balance:")
-        self.account.edit_balance(amount)
+        self.account_manager.edit_balance(self.account_id, amount)
 
     def add_income(self):
         amount = getFloat("Enter Income:")
-        self.transaction.add_income(self.account, amount)
+        self.transaction.add_income(self.account_id, amount)
 
     def add_expense(self):
         amount = getFloat("Enter Expense:")
         try:
-            self.transaction.add_expense(self.account, amount)
+            self.transaction.add_expense(self.account_id, amount)
         except ValueError as e:
             print(e)
 
-    def open_account(self):
-        self.account = self.account.open_account()
-
-    def close_account(self):
-        self.account.close_account()
-
-    def switch_accounts(self):
-        self.account = self.account.switch_accounts()
-
-    def list_all(self):
-        for record in self.transaction.list_all():
-            print(record)
-
-    def transfer(self):
-        target_file = input("Enter filename of account to transfer TO: ")
-        amount = getFloat("Enter amount to transfer: ")
-        note = input("Enter note for the transfer: ")
-        result = self.transaction.transfer(self.account, target_file, amount, note)
-        print(result)
-
     def update_amount(self):
-        self.transaction.update_amount(self.account)
+        self.transaction.update_amount(self.account_id)
 
     def view_balance(self):
-        print(f"Current balance of Account '{self.account.name}': {self.account.balance()}")
+        print(f"Current balance: {self.account_manager.get_account(self.account_id)['balance']}")
 
     def view_incomes(self):
-        for income in self.account.incomes:
-            print(f"{income}")
-        Total_income = sum(income.amount for income in self.account.incomes)
+        for income in self.transaction.list_all(self.account_id):
+            if income[2] == 1:
+                print(income)
+        Total_income = sum(t[0] for t in self.transaction.list_all(self.account_id) if t[2] == 1)
         print(f"Total income: {Total_income}")
 
     def view_expenses(self):
-        for expense in self.account.expenses:
-            print(f"{expense}")
-        Total_expense = sum(expense.amount for expense in self.account.expenses)
+        for expense in self.transaction.list_all(self.account_id):
+            if expense[2] == 2:
+                print(expense)
+        Total_expense = sum(t[0] for t in self.transaction.list_all(self.account_id) if t[2] == 2)
         print(f"Current Expense: {Total_expense}")
+
+    def list_all(self):
+        for record in self.transaction.list_all(self.account_id):
+            print(record)
+
+    def transfer(self):
+        print("Transfer not implemented in this version.")
+
+    def switch_accounts(self):
+        self.account_id = self.account_manager.switch_accounts(self.user_id)
+
+    def add_account_for_user(self):
+        name = input("Account Type Name: ")
+        balance = getFloat("Starting Balance: ")
+        self.account_id = self.account_manager.open_account(self.user_id, name, balance)
+
+    def close_user_account(self):
+        account_id = input("Account ID to close: ")
+        self.account_manager.close_account(account_id)
 
     def view_logs_by_index(self):
         for log in self.export_logs.sortByIndex():
@@ -156,7 +128,7 @@ class Menu:
                 print(log)
         except ValueError:
             print("Please enter a valid number.")
-    
+
     def create_user(self):
         name = input("Name: ")
         email = input("Email: ")
@@ -165,13 +137,15 @@ class Menu:
         self.user.create(username, name, email, password)
         print("User created.")
 
-    def login_user(self): 
+    def login_user(self):
         username = input("Username: ")
         password = input("Password: ")
         if self.user.authenticate(username, password):
             print("Login successful.")
+            self.current_user = self.user.get_by_username(username)
+            return True
         else:
-            print("Login failed.")
+            return False
 
     def forgot_password(self):
         username = input("Username: ")
@@ -186,40 +160,8 @@ class Menu:
         print("Account type added.")
 
     def list_account_types(self):
-        types = self.account_type.list_all()
-        for t in types:
+        for t in self.account_type.list_all():
             print(t)
-
-    def list_transaction_types(self):
-        for ttype in self.transaction_type.LIST_ALL():
-            print(ttype)
-
-    def add_category(self):
-        name = input("Category name: ")
-        print(self.categories.add(name))
-
-    def list_categories(self):
-        categories = self.categories.view()
-        for c in categories:
-            print(c)
-
-
-    def add_account_for_user(self):
-        user_id = input("User ID: ")
-        name = input("Account Name: ")
-        balance = getFloat("Initial Balance: ")
-        self.user.add_account(user_id, name, balance)
-        print("Account added.")
-
-    def close_user_account(self):
-        account_id = (input("Account ID to close: "))
-        self.user.close_account(account_id)
-        print("Account closed.")
-
-    # def freeze_account(self):
-    #     account_id = (input("Account ID to freeze: "))
-    #     self.user.freeze_account(account_id)
-    #     print("Account frozen.")
 
     def change_account_type_name(self):
         type_id = int(input("Account Type ID: "))
@@ -228,7 +170,7 @@ class Menu:
         print("Account type name updated.")
 
     def disable_account_type(self):
-        type_id = (input("Account Type ID to disable: "))
+        type_id = input("Account Type ID to disable: ")
         self.account_type.disable_account(type_id)
         print("Account type disabled.")
 
@@ -241,6 +183,10 @@ class Menu:
         type_id = int(input("Account Type ID: "))
         print(self.account_type.get_account_details(type_id))
 
+    def add_category(self):
+        name = input("Category name: ")
+        print(self.categories.add(name))
+
     def update_category(self):
         category_id = int(input("Category ID: "))
         new_name = input("New Name: ")
@@ -250,9 +196,17 @@ class Menu:
         category_id = int(input("Category ID to delete: "))
         print(self.categories.delete(category_id))
 
+    def list_categories(self):
+        for row in self.categories.view():
+            print(row)
+
     def sort_categories(self):
         for row in self.categories.sort():
             print(row)
+
+    def list_transaction_types(self):
+        for ttype in self.transaction_type.LIST_ALL():
+            print(ttype)
 
     def add_transaction_type(self):
         type_id = int(input("Transaction Type ID: "))
@@ -287,9 +241,6 @@ class Menu:
         self.quit = False
         while not self.quit:
             print("""
-            Please choose from the following actions:
-
-            Account Operations:
             B = Edit balance       I = Add income         E = Add expenditure
             VB = View balance      VI = View incomes      VE = View expenditures
             LA = List transactions TR = Transfer funds    UA = Update transaction
@@ -301,7 +252,7 @@ class Menu:
 
             User Management:
             CU = Create user       LU = Login user        FPW = Forgot password
-            ADA = Add user account CLA = Close user acct  FZA = Freeze account
+            ADA = Add user account CLA = Close user acct
 
             Account Types:
             AAT = Add type         LAT = List types       CNAT = Change type name
@@ -317,16 +268,57 @@ class Menu:
 
             Q = Quit program
             """)
-
             try:
-                self.options[input("Option: ").upper()].execute()            
+                cmd = input("Option: ").upper()
+                if cmd == "B": self.edit_balance()
+                elif cmd == "I": self.add_income()
+                elif cmd == "E": self.add_expense()
+                elif cmd == "VB": self.view_balance()
+                elif cmd == "VI": self.view_incomes()
+                elif cmd == "VE": self.view_expenses()
+                elif cmd == "UA": self.update_amount()
+                elif cmd == "LA": self.list_all()
+                elif cmd == "TR": self.transfer()
+                elif cmd == "SA": self.switch_accounts()
+                elif cmd == "CA": self.close_user_account()
+                elif cmd == "OA": self.add_account_for_user()
 
-            except KeyError:
-                print("Please enter a valid option.")
+                elif cmd == "XL": self.view_logs_by_index()
+                elif cmd == "XT": self.view_logs_by_timestamp()
+                elif cmd == "XF": self.find_log_by_id()
+                elif cmd == "XB": self.find_log_by_balance()
 
-class Option:
-    def __init__(self, code: str, func):
-        self.code = code
-        self.execute = func
+                elif cmd == "CU": self.create_user()
+                elif cmd == "LU": self.login_user()
+                elif cmd == "FPW": self.forgot_password()
 
-Menu().loop()
+                elif cmd == "ADA": self.add_account_for_user()
+                elif cmd == "CLA": self.close_user_account()
+
+                elif cmd == "AAT": self.add_account_type()
+                elif cmd == "LAT": self.list_account_types()
+                elif cmd == "CNAT": self.change_account_type_name()
+                elif cmd == "DACT": self.disable_account_type()
+                elif cmd == "ENACT": self.enable_account_type()
+                elif cmd == "GAT": self.get_account_type_details()
+
+                elif cmd == "AC": self.add_category()
+                elif cmd == "UC": self.update_category()
+                elif cmd == "DC": self.delete_category()
+                elif cmd == "LC": self.list_categories()
+                elif cmd == "SC": self.sort_categories()
+
+                elif cmd == "LTT": self.list_transaction_types()
+                elif cmd == "ATT": self.add_transaction_type()
+                elif cmd == "UTT": self.update_transaction_type_name()
+                elif cmd == "DTT": self.delete_transaction_type()
+                elif cmd == "STT": self.search_transaction_type()
+                elif cmd == "GTT": self.group_transaction_types()
+
+                elif cmd == "Q": self.exit()
+                else: print("Invalid option.")
+            except Exception as e:
+                print(f"Error: {e}")
+
+if __name__ == "__main__":
+    Menu().loop()
