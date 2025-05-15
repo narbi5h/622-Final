@@ -1,5 +1,7 @@
 import sqlite3
 from typing import List, Dict
+import os
+from datetime import datetime
 
 class Class_Account:
     def __init__(self, db_path: str = "walletApp.db"):
@@ -18,11 +20,11 @@ class Class_Account:
             new_id = f"ACCT{last_num + 1:03d}"
         else:
             new_id = "ACCT001"
-            conn.execute("""
-                INSERT INTO account (account_id, user_id, account_type, balance)
-                VALUES (?, ?, ?, ?)
-            """, (new_id, user_id, account_type, balance))
-            conn.commit()
+        conn.execute("""
+            INSERT INTO account (account_id, user_id, account_type, balance)
+            VALUES (?, ?, ?, ?)
+        """, (new_id, user_id, account_type, balance))
+        conn.commit()
         return new_id
 
     def close_account(self, account_id: str) -> bool:
