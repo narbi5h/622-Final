@@ -47,11 +47,18 @@ class TRANSACTION_TYPE:
         return f"Added new transaction type with type_id {type_id} and category_name '{category_name}'"
 
     def GROUP(self):
-        """Group transaction types by the first letter of their category_name."""
+        """Recursively group transaction types by the first letter of their category_name."""
+
         grouped = {}
-        for item in self.data:
-            key = item['category_name'][0].upper()
-            if key not in grouped:
-                grouped[key] = []
-            grouped[key].append(item)
+
+        def helper(index):
+            if index < len(self.data):
+                item = self.data[index]
+                key = item['category_name'][0].upper()
+                if key not in grouped:
+                    grouped[key] = []
+                grouped[key].append(item)
+                helper(index + 1)
+
+        helper(0)
         return grouped

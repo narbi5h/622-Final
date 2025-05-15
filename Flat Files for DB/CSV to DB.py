@@ -6,7 +6,7 @@ import os
 os.chdir(r"c:\Users\jclle\OneDrive\Documents\GitHub\622-Final\Flat Files for DB")
 
 # === Step 1: Remove existing database ===
-db_path = "walletTest.db"
+db_path = "walletApp.db"
 if os.path.exists(db_path):
     os.remove(db_path)
 

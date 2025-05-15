@@ -69,15 +69,3 @@ class Categories:
             return [dict(row) for row in rows]
         finally:
             conn.close()
-
-
-# if __name__ == "__main__":
-#     cat = Categories("walletApp.db")
-
-#     # Example usage
-#     print(cat.add("Books"))
-#     print(cat.add("Groceries"))
-#     print(cat.view())
-#     print(cat.update(1, "E-Books"))
-#     print(cat.delete(2))
-#     print(cat.sort())

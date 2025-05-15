@@ -141,6 +141,11 @@ class User:
             cur = conn.execute("SELECT user_id, name, email, username FROM users")
             rows = cur.fetchall()
         return [
-            {"user_id": r[0], "name": r[1], "email": r[2], "username": r[3]}
+            {
+            "user_id": r[0], 
+            "name": r[1],
+            "email": r[2],
+            "username": r[3]
+            }
             for r in rows
         ]

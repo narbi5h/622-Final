@@ -319,7 +319,8 @@ class Menu:
             """)
 
             try:
-                self.options[input("Option: ")].execute()
+                self.options[input("Option: ").upper()].execute()            
+
             except KeyError:
                 print("Please enter a valid option.")
 
