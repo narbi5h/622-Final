@@ -34,7 +34,12 @@ class Transaction:
         with self._connect() as conn:
             cur = conn.execute("SELECT transaction_id FROM transactions ORDER BY transaction_id DESC LIMIT 1")
             last = cur.fetchone()
-            new_id = f"{int(last[0]) + 1:08d}" if last else "00000001"
+            if last:
+                last_id = last[0]
+                last_num = int(''.join(filter(str.isdigit, last_id)))
+                new_id = f"TXN{last_num + 1:03d}"
+            else:
+                new_id = "TXN001"
 
             cur = conn.execute("""
                 SELECT sub_category_id FROM categories

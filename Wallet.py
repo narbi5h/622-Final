@@ -71,7 +71,11 @@ class Menu:
         self.transaction.update_amount(self.account_id)
 
     def view_balance(self):
-        print(f"Current balance: {self.account_manager.get_account(self.account_id)['balance']}")
+        acc = self.account_manager.get_account(self.account_id)
+        if acc:
+            print(f"Current balance: {acc['balance']}")
+        else:
+            print("Account not found.")
 
     def view_incomes(self):
         for income in self.transaction.list_all(self.account_id):
