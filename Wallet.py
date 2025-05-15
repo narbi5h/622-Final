@@ -21,7 +21,7 @@ class Menu:
         file = open('data.txt', "a+")
         file.seek(0)
         first = file.readline()
-        if not first:
+        if first:
             account_name = input("Enter account name: ")
             balance = getFloat("Enter initial balance: ")
             file.write(f"{account_name}:{balance}\n")
