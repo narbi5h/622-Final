@@ -164,7 +164,7 @@ class Menu:
             print(t)
 
     def change_account_type_name(self):
-        type_id = int(input("Account Type ID: "))
+        type_id = (input("Account Type ID: "))
         new_name = input("New Name: ")
         self.account_type.change_account_type_name(type_id, new_name)
         print("Account type name updated.")
@@ -175,12 +175,12 @@ class Menu:
         print("Account type disabled.")
 
     def enable_account_type(self):
-        type_id = int(input("Account Type ID to enable: "))
+        type_id = (input("Account Type ID to enable: "))
         self.account_type.enable_account(type_id)
         print("Account type enabled.")
 
     def get_account_type_details(self):
-        type_id = int(input("Account Type ID: "))
+        type_id = (input("Account Type ID: "))
         print(self.account_type.get_account_details(type_id))
 
     def add_category(self):
@@ -188,12 +188,12 @@ class Menu:
         print(self.categories.add(name))
 
     def update_category(self):
-        category_id = int(input("Category ID: "))
+        category_id = (input("Category ID: "))
         new_name = input("New Name: ")
         print(self.categories.update(category_id, new_name))
 
     def delete_category(self):
-        category_id = int(input("Category ID to delete: "))
+        category_id = (input("Category ID to delete: "))
         print(self.categories.delete(category_id))
 
     def list_categories(self):
@@ -209,17 +209,17 @@ class Menu:
             print(ttype)
 
     def add_transaction_type(self):
-        type_id = int(input("Transaction Type ID: "))
+        type_id = (input("Transaction Type ID: "))
         name = input("Category Name: ")
         print(self.transaction_type.ADD(type_id, name))
 
     def update_transaction_type_name(self):
-        type_id = int(input("Transaction Type ID: "))
+        type_id = (input("Transaction Type ID: "))
         new_name = input("New Name: ")
         print(self.transaction_type.UPDATE_NAME(type_id, new_name))
 
     def delete_transaction_type(self):
-        type_id = int(input("Transaction Type ID to delete: "))
+        type_id = (input("Transaction Type ID to delete: "))
         print(self.transaction_type.DELETE_TYPE(type_id))
 
     def search_transaction_type(self):

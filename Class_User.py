@@ -1,5 +1,7 @@
 import sqlite3
 from typing import List, Dict
+import random
+import uuid
 
 class User:
     def __init__(self, db_path: str = "walletApp.db"):
@@ -8,11 +10,8 @@ class User:
     def create(self, username: str, name: str, email: str, password: str):
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
-            last_user_id = cur.fetchone()
-            if last_user_id:
-                new_id = f"{int(''.join(filter(str.isdigit, last_user_id[0]))) + 1:08d}"
-            else:
-                new_id = "00000001"
+            new_id = str(uuid.uuid4())
+              
 
             conn.execute(
                 """
