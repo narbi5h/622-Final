@@ -125,20 +125,20 @@ class Menu:
         account_id = input("Account ID to close: ")
         self.account_manager.close_account(account_id)
 
-    def view_logs_by_index(self):
+    def view_logs_by_sorted_index(self):
         for log in self.export_logs.sortByIndex():
             print(log)
 
-    def view_logs_by_timestamp(self):
+    def view_logs_by_sorted_timestamp(self):
         for log in self.export_logs.sortByTimestamp():
             print(log)
 
     def find_log_by_id(self):
         try:
-            log_id = int(input("Enter Export Log ID: "))
+            log_id = str(input("Enter Export Log ID: "))
             print(self.export_logs.findByIndex(log_id))
         except ValueError:
-            print("Please enter a valid integer.")
+            print("Please enter a valid option.")
 
     def find_log_by_balance(self):
         try:
@@ -266,7 +266,7 @@ class Menu:
             OA = Open account      SA = Switch account    CA = Close account
 
             Export Logs:
-            XL = Logs by index     XT = Logs by timestamp
+            XL = Logs by sorted index     XT = Logs by sorted timestamp
             XF = Find log by ID    XB = Find logs by balance
 
             User Management:
@@ -302,8 +302,8 @@ class Menu:
                 elif cmd == "CA": self.close_user_account()
                 elif cmd == "OA": self.add_account_for_user()
 
-                elif cmd == "XL": self.view_logs_by_index()
-                elif cmd == "XT": self.view_logs_by_timestamp()
+                elif cmd == "XL": self.view_logs_by_sorted_index()
+                elif cmd == "XT": self.view_logs_by_sorted_timestamp()
                 elif cmd == "XF": self.find_log_by_id()
                 elif cmd == "XB": self.find_log_by_balance()
 

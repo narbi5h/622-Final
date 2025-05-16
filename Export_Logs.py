@@ -27,7 +27,7 @@ class exportLogs:
         return sorted(self.logs, key=lambda x: x['export_id'])
 
     def sortByTimestamp(self) -> List[Dict[str, Any]]:
-        return sorted(self.logs, key=lambda x: datetime.strptime(x['timestamp'], "%Y-%m-%d %H:%M:%S"))
+        return sorted(self.logs, key=lambda x: datetime.strptime(x['timestamp'], "%m/%d/%Y %H:%M"))
 
     def sortByMaxExpense(self) -> List[Dict[str, Any]]:
         """Sort logs by associated account balance descending."""
@@ -37,7 +37,7 @@ class exportLogs:
         """Sort logs by associated account balance ascending."""
         return sorted(self.logs, key=lambda x: x['balance'])
 
-    def findByIndex(self, export_id: int) -> Dict[str, Any]:
+    def findByIndex(self, export_id: str) -> Dict[str, Any]:
         for log in self.logs:
             if log['export_id'] == export_id:
                 return log
