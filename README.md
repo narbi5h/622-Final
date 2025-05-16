@@ -22,7 +22,7 @@ A lightweight, console-based personal finance tracker built with Python and SQLi
 | `Class_User.py`   | User creation, login, authentication, password reset |
 | `Class_Transaction.py` | Transaction logic for income, expense, transfer |
 | `Export_Logs.py`  | Export logs sorted/searched by index, time, balance |
-| `TRANSACTION_TYPE.py` | Manage transaction type CRUD and grouping      |
+| `TRANSACTION_TYPE.py` | Manage transaction type       |
 | `Categories.py`   | Manage income/expense categories                   |
 | `Class_Account_type.py` | Dictionary for account types            |
 
