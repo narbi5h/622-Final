@@ -9,14 +9,22 @@ class User:
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.cursor()
 
+            # Generate a new user_id primary key that doesn't exist in the database
+            cur.execute("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1")
+            last_user_id = cur.fetchone()
+            if last_user_id:
+                last_id = last_user_id[0]
+                last_num = int(''.join(filter(str.isdigit, last_id)))
+                user_id = f"USER{last_num + 1:03d}"
+
             # Optional: check for existing username
             cur.execute("SELECT 1 FROM users WHERE username = ?", (username,))
             if cur.fetchone():
                 print("Username already exists.")
                 return
             cur.execute(
-                "INSERT INTO users (username, name, email, password) VALUES (?, ?, ?, ?)",
-                (username, name, email, password)
+                "INSERT INTO users (user_id, username, name, email, password) VALUES (?, ?, ?, ?, ?)",
+                (user_id, username, name, email, password)
             )
             conn.commit()
 

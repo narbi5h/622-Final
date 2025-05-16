@@ -4,66 +4,71 @@ from typing import List, Dict
 class AccountType:
     def __init__(self, db_path: str = "walletApp.db"):
         """
-        Manages the `account_types` table, which should have columns:
-          - type_id       INTEGER PRIMARY KEY
+        Manages the `account_type` table, which should have columns:
+          - account_type       INTEGER PRIMARY KEY
           - name          TEXT    NOT NULL UNIQUE
           - description   TEXT
           - is_enabled    INTEGER NOT NULL DEFAULT 1  -- 1=enabled, 0=disabled
         """
         self.db_path = db_path
 
-    def add_account_type(self, name: str, description: str = ""):
+    def add_account_type(self, type_name: str, description: str = ""):
         """INSERT a new account type (enabled by default)."""
         sql = """
-        INSERT INTO account_types (name, description)
+        INSERT INTO account_type (type_name)
         VALUES (?, ?)
         """
-        self._run(sql, (name, description))
+        self._run(sql, (type_name))
 
     def list_all(self) -> List[Dict]:
         """RETURN all account types, including their enabled/disabled status."""
         sql = """
-        SELECT type_id, name, description, is_enabled
-         FROM account_types"
-
+        SELECT account_type, type_name, is_enabled
+          FROM account_type
         """
         return self._fetchall(sql)
+        # sql = """
+        # SELECT account_type, type_name, is_enabled
+        #  FROM account_types"
 
-    def change_account_type_name(self, type_id: int, new_name: str):
+        # """
+        # return self._fetchall(sql)
+
+    def change_account_type_name(self, account_type: int, new_name: str):
         """UPDATE the name of an existing account type."""
         sql = """
-        UPDATE account_types
+        UPDATE account_type
            SET name = ?
-         WHERE type_id = ?
+         WHERE account_type = ?
         """
-        self._run(sql, (new_name, type_id))
+        self._run(sql, (new_name, account_type))
 
-    def get_account_details(self, type_id: int) -> Dict:
+    def get_account_details(self, account_type: int) -> Dict:
         """SELECT and RETURN details for a single account type by ID."""
         sql = """
-        SELECT type_id, name, description, is_enabled
-          FROM account_types
-         WHERE type_id = ?
+        SELECT account_type, type_description, is_enabled
+          FROM account_type
+         WHERE account_type = ?
         """
-        return self._fetchone(sql, (type_id,))
+        return self._fetchone(sql, (account_type,))
 
-    def disable_account(self, type_id: int):
+    def disable_account(self, account_type: int):
         """SET is_enabled = 0 for the given account type."""
         sql = """
-        UPDATE account_types
+        UPDATE account_type
            SET is_enabled = 0
-         WHERE type_id = ?
+         WHERE account_type = ?
         """
-        self._run(sql, (type_id,))
+        self._run(sql, (account_type,))
 
-    def enable_account(self, type_id: int):
+    def enable_account(self, account_type: int):
         """SET is_enabled = 1 for the given account type."""
         sql = """
-        UPDATE account_types
+        UPDATE account_type
            SET is_enabled = 1
-         WHERE type_id = ?
+         WHERE account_type = ?
         """
-        self._run(sql, (type_id,))
+        self._run(sql, (account_type,))
 
     # ────────────────────────────────────────────────────────────────────────────
     # Private helpers

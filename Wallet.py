@@ -35,6 +35,15 @@ class Menu:
                     break
                 else:
                     print("Login failed. Please try again.")
+                    print("Did you forget your password? (Y/N):")
+                    choice = input().strip().upper()
+                    if choice == "Y":
+                        self.forgot_password()
+                        print("Password reset. Please log in again.")
+                    elif choice == "N":
+                        print("Please try logging in again.")
+                    else:
+                        print("Invalid input. Please enter 'Y' or 'N'.")
             else:
                 print("Invalid input. Please enter 'Y' or 'N'.")
 
@@ -46,7 +55,7 @@ class Menu:
         accounts = self.account_manager.list_accounts(self.user_id)
         if not accounts:
             print("No accounts found. Let's create one.")
-            name = input("Enter account type name (e.g. 'Checking'): ")
+            name = input("Enter account type name ('CK' for Checking, 'SV' for savings): ")
             balance = getFloat("Enter starting balance: ")
             self.account_id = self.account_manager.open_account(self.user_id, name, balance)
         else:
